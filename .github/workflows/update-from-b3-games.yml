@@ -1,0 +1,88 @@
+name: Update from B3-games
+
+# Keeps https://sols.tools in step with simchacohen1/B3-games.
+#
+# Every 10 minutes (and whenever it is started by hand) this checks the newest
+# commit on B3-games main. If it is new, the release is copied here, the
+# Shluchim Online School branding step (sols-site/build.mjs from B3-games) is
+# run on the copy, and the result is committed. GitHub Pages then publishes it.
+#
+# It only READS B3-games (a public repository) and only WRITES to this
+# repository. It never touches Firebase or funtorahtools.com.
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'B3-games branch to copy (leave as main for normal use)'
+        default: main
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-from-b3-games
+  cancel-in-progress: false
+
+env:
+  SOURCE_REPO: https://github.com/simchacohen1/B3-games.git
+  SOURCE_REF: ${{ github.event.inputs.ref || 'main' }}
+
+jobs:
+  update:
+    if: github.repository == 'simchacohen1/sols-school-site'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Open this repository
+        uses: actions/checkout@v4
+        with:
+          path: site
+
+      - name: Is there a new release?
+        id: check
+        run: |
+          latest=$(git ls-remote "$SOURCE_REPO" "refs/heads/$SOURCE_REF" | cut -f1)
+          if [ -z "$latest" ]; then
+            echo "::error::Could not find branch $SOURCE_REF in B3-games."
+            exit 1
+          fi
+          current=$(cat site/.sols-source 2>/dev/null || true)
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          if [ "$latest" = "$current" ]; then
+            echo "new=false" >> "$GITHUB_OUTPUT"
+            echo "sols.tools already has $latest."
+          else
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Copy the release and add the branding
+        if: steps.check.outputs.new == 'true'
+        run: |
+          git init -q src
+          git -C src fetch -q --depth 1 "$SOURCE_REPO" "${{ steps.check.outputs.latest }}"
+          git -C src -c core.autocrlf=false checkout -q FETCH_HEAD
+          node src/sols-site/build.mjs src
+          rm -rf src/.git src/.github
+          rsync -a --delete --exclude '.git' --exclude '.github' src/ site/
+          echo "${{ steps.check.outputs.latest }}" > site/.sols-source
+
+      - name: Publish
+        if: steps.check.outputs.new == 'true'
+        working-directory: site
+        run: |
+          test "$(cat CNAME)" = "sols.tools"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config core.autocrlf false
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git commit -q -m "Update from B3-games@${{ steps.check.outputs.latest }} ($SOURCE_REF)"
+          git push origin HEAD:main
+          echo "sols.tools updated from B3-games@${{ steps.check.outputs.latest }} ($SOURCE_REF)" >> "$GITHUB_STEP_SUMMARY"

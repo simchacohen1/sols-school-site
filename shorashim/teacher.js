@@ -1,4 +1,4 @@
-const FIREBASE_CONFIG={apiKey:"AIzaSyDaheO5K2qL8qe3rHIZY4nTd0wuEUG_DEs",authDomain:"b3-games.firebaseapp.com",databaseURL:"https://b3-games-default-rtdb.firebaseio.com",projectId:"b3-games",storageBucket:"b3-games.firebasestorage.app",messagingSenderId:"568530046190",appId:"1:568530046190:web:fd765fdd27e55a3c73f7ff"};
+const FIREBASE_CONFIG={apiKey:"AIzaSyDaheO5K2qL8qe3rHIZY4nTd0wuEUG_DEs",authDomain:"auth.sols.tools",databaseURL:"https://b3-games-default-rtdb.firebaseio.com",projectId:"b3-games",storageBucket:"b3-games.firebasestorage.app",messagingSenderId:"568530046190",appId:"1:568530046190:web:fd765fdd27e55a3c73f7ff"};
 if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);const db=firebase.database();const ROOT='posukPractice/shorashimLearning';
 // Opened from the teacher home page as ?class=<id>. B3's own classes (et/wt) and the
 // plain link keep the original shared lists. Any other class has its own separate

@@ -9,7 +9,7 @@ if (/^fun-torah-tools-staging--(?:homework-406-preview|pr-597-homework-notes)-[a
 } else {
   window.B3_FIREBASE_CONFIG = {
     apiKey: "AIzaSyDaheO5K2qL8qe3rHIZY4nTd0wuEUG_DEs",
-    authDomain: "b3-games.firebaseapp.com",
+    authDomain: "auth.sols.tools",
     databaseURL: "https://b3-games-default-rtdb.firebaseio.com",
     projectId: "b3-games",
     storageBucket: "b3-games.firebasestorage.app",

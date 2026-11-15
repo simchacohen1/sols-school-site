@@ -1,13 +1,20 @@
-# sols-school-site
+# B3 Games
 
-The published copy of the Shluchim Online School website, https://sols.tools.
+Live site: https://simchacohen1.github.io/B3-games/
 
-**Do not edit this repository by hand.** Everything except `.github/` is
-replaced automatically from
-[simchacohen1/B3-games](https://github.com/simchacohen1/B3-games) by the
-"Update from B3-games" workflow, within about 15 minutes of each release to its
-`main` branch. Make changes in B3-games instead; see `sols-site/README.md`
-there.
+Student-facing games, linked from the homepage (`index.html`):
 
-Both sols.tools and funtorahtools.com use the same live Firebase project, so
-accounts and saved work are shared.
+- **Chumash Quiz** — `chumash-quiz/index.html`
+- **Posuk Practice Scroll** — `record_pesukim/student.html`
+- **Rashi Letters** — `rashi-letters/student.html`
+- **Shorashim** — `shorashim/teacher.html`
+- **Class Gallery** — `class-gallery/index.html`
+- **Game Show** — `game-show/player.html`
+
+Games are toggled on/off from the "Admin" button on the homepage (backed by Firebase; see `site-settings.js`).
+
+Every game/tool now lives in its own folder (mirroring `rashi-letters/`, `record_pesukim/`, `shorashim/`, `game-show/`, `work-timer/`, `class-slides/`, etc.). Only files genuinely shared across pages stay at the repo root: `index.html`, `all-pages.html`, `firebase-config.js`, `firebase-rules.json`, `site-settings.js`, `generate_page_list.py`.
+
+Teacher dashboards, prototypes, and other utilities (Work Timer, class slides, teacher consoles, etc.) aren't linked from the homepage but are all listed automatically at `all-pages.html`, which regenerates itself on every push via `generate_page_list.py` / `.github/workflows/update-page-list.yml`.
+
+<!-- GitHub Pages rebuild requested 2026-10-21 after runner queue cancellation; no application changes. -->

@@ -1,5 +1,25 @@
 <!doctype html>
-<script src="/sols-brand.js"></script><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><title>PR234 temporary-record verification</title><style>body{font:16px system-ui;margin:30px;max-width:1000px}pre{white-space:pre-wrap}button{padding:12px;margin:8px}</style><h1>PR234 temporary test records only</h1><p>Read-only inspection of the two authorized temporary identities.</p><button id="inspect">Inspect temporary records</button><button id="clearLocal">Remove only temporary local caches</button><pre id="result">Checking owner authentication…</pre><script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-database-compat.js"></script><script src="/firebase-config.js"></script><script>
+<script src="/sols-brand.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/sols-favicon-32x32.png" data-sols="1">
+<link rel="icon" type="image/png" sizes="16x16" href="/sols-favicon-16x16.png" data-sols="1">
+<link rel="apple-touch-icon" href="/sols-apple-touch-icon.png" data-sols="1">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SOLS Tools">
+<meta property="og:title" content="SOLS Tools | PR234 temporary-record verification">
+<meta property="og:description" content="Learning games and practice tools">
+<meta property="og:url" content="https://sols.tools/preview-pr234/temp-records.html">
+<meta property="og:image" content="https://sols.tools/sols-share-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Shluchim Online School emblem">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SOLS Tools | PR234 temporary-record verification">
+<meta name="twitter:description" content="Learning games and practice tools">
+<meta name="twitter:image" content="https://sols.tools/sols-share-image.png">
+<meta name="twitter:image:alt" content="Shluchim Online School emblem">
+<link rel="image_src" href="https://sols.tools/sols-share-image.png">
+<meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><title>SOLS Tools | PR234 temporary-record verification</title><style>body{font:16px system-ui;margin:30px;max-width:1000px}pre{white-space:pre-wrap}button{padding:12px;margin:8px}</style><h1>PR234 temporary test records only</h1><p>Read-only inspection of the two authorized temporary identities.</p><button id="inspect">Inspect temporary records</button><button id="clearLocal">Remove only temporary local caches</button><pre id="result">Checking owner authentication…</pre><script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-database-compat.js"></script><script src="/firebase-config.js"></script><script>
 const manifest=[{"id":"student_56848fe7d1544f5b81bd25b130615c79","name":"TEMP PR234 ET Verification","classId":"et"},{"id":"student_eea1b121b2ec4e81aff9df7e7b633b6f","name":"TEMP PR234 WT Verification","classId":"wt"}];firebase.initializeApp(window.B3_FIREBASE_CONFIG);const db=firebase.database(),out=document.getElementById('result');function owner(){const u=firebase.auth().currentUser;if(!u||u.email!=='simcha5770@gmail.com'||!u.emailVerified)throw Error('Owner sign-in required.');}
 firebase.auth().onAuthStateChanged(u=>{out.textContent=u&&u.email==='simcha5770@gmail.com'&&u.emailVerified?'Owner verified. Inspection does not write database records.':'Open this page from the signed-in owner tab.';});
 document.getElementById('inspect').onclick=async()=>{try{owner();const rows=[];for(const m of manifest){const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(m.id));const uid='student_'+Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('').slice(0,28);rows.push({identity:m.name,id:m.id,authUid:uid});const paths=['b3Games/students/'+m.id+'/profile','b3Games/students/'+m.id+'/memberships/b3-2026_'+m.classId,'b3Games/workspaces/b3-2026/classes/'+m.classId+'/members/'+m.id,'posukPractice/shorashimLearning/students/'+m.id];for(const path of paths){const snap=await db.ref(path).once('value');rows.push({path,exists:snap.exists()});}const audit=await db.ref('b3Games/workspaces/b3-2026/classes/'+m.classId+'/managementAudit').orderByChild('studentId').equalTo(m.id).once('value');audit.forEach(s=>{if(s.val()?.studentId===m.id)rows.push({path:'b3Games/workspaces/b3-2026/classes/'+m.classId+'/managementAudit/'+s.key,exists:true});});rows.push({privatePasscodePath:'b3Private/passcodes/'+m.id,verification:'Firebase Console only'});}out.textContent=JSON.stringify(rows,null,2);}catch(e){out.textContent=e.message;}};

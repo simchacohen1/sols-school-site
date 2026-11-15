@@ -60,18 +60,24 @@ jobs:
           fi
 
       - name: Copy the release and add the branding
+        id: copy
         if: steps.check.outputs.new == 'true'
         run: |
           git init -q src
           git -C src fetch -q --depth 1 "$SOURCE_REPO" "${{ steps.check.outputs.latest }}"
           git -C src -c core.autocrlf=false checkout -q FETCH_HEAD
+          if [ ! -f src/sols-site/build.mjs ]; then
+            echo "::warning::B3-games $SOURCE_REF does not contain sols-site/build.mjs yet, so nothing was copied."
+            exit 0
+          fi
           node src/sols-site/build.mjs src
           rm -rf src/.git src/.github
           rsync -a --delete --exclude '.git' --exclude '.github' src/ site/
           echo "${{ steps.check.outputs.latest }}" > site/.sols-source
+          echo "built=true" >> "$GITHUB_OUTPUT"
 
       - name: Publish
-        if: steps.check.outputs.new == 'true'
+        if: steps.copy.outputs.built == 'true'
         working-directory: site
         run: |
           test "$(cat CNAME)" = "sols.tools"

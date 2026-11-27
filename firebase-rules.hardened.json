@@ -801,6 +801,12 @@
             }
           }
         }
+      },
+      "chossidLamdanWeeklyMarks": {
+        "$ownerUid": {
+          ".read": "auth != null && auth.uid == $ownerUid && auth.token.email == 'simcha5770@gmail.com' && auth.token.email_verified == true",
+          ".write": "auth != null && auth.uid == $ownerUid && auth.token.email == 'simcha5770@gmail.com' && auth.token.email_verified == true"
+        }
       }
     }
   }

@@ -32,6 +32,7 @@ h1{color:var(--blue);margin-bottom:4px}.small{font-size:13px;color:var(--muted)}
 input,textarea,button{font:inherit}input,textarea{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px}input[type=number]{width:85px}
 button{border:0;border-radius:9px;padding:11px 16px;font-weight:800;cursor:pointer}.good{background:var(--good);color:#fff}.secondary{background:#e8f1f7;color:var(--ink)}
 .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}.status{font-weight:700}.back{color:var(--blue);text-decoration:none;font-weight:700}
+.saved-weeks{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.saved-weeks select{font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#fff}.saved-weeks label{font-weight:700}
 .banner{background:#eef7fd;border:1px solid var(--line);border-radius:10px;padding:10px 12px}.nigri-grid{display:grid;grid-template-columns:130px 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:12px 0}.nigri-grid label{background:#edf5fa;border-bottom:1px solid var(--line);padding:10px;font-weight:700}.nigri-grid .field{border-bottom:1px solid var(--line);padding:6px}.nigri-grid label:last-of-type,.nigri-grid .field:last-child{border-bottom:0}.nigri-grid input,.nigri-grid textarea{margin:0}.nigri-grid input[readonly],.nigri-grid textarea[readonly]{background:#f8fbfd}
 @media(max-width:700px){th:nth-child(3),td:nth-child(3){min-width:260px}}
 </style><script defer src="student-lock.js?v=20261125-ctx1" data-feature="weekly-quiz"></script>
@@ -40,15 +41,15 @@ button{border:0;border-radius:9px;padding:11px 16px;font-weight:800;cursor:point
 <a class="back" href="sync-to-nigri/school-marks.html">← Back to School Marks</a>
 <h1>A Chossid is a Lamdan — Weekly Marks</h1>
 <div data-nigri-connect hidden></div>
-<div class="banner">These are reviewable drafts. Edit any score or comment before syncing. Nothing is saved to Nigri until you press the green button.</div>
+<div class="banner">Save each class's marks for the selected date. Saved weeks stay separate and can be reopened from this page. Nigri syncing is a separate option.</div>
 <div class="card">
 <h2 style="margin-top:0">Nigri Mark Details</h2>
-<div class="small">This is exactly how the mark will be labeled when you sync. Grade changes automatically for ET and WT.</div>
+<div class="small">The selected date identifies this week's record. Saving one class will not change another class or a different week.</div>
 <div class="nigri-grid">
-  <label>Date</label><div class="field"><input id="date" type="date"></div>
+  <label>Week date</label><div class="field"><input id="date" type="date"><div class="saved-weeks"><label for="savedWeeks">Open a saved week</label><select id="savedWeeks"><option value="">Choose a saved week…</option></select><span id="storageStatus" class="status" role="status"></span></div></div>
   <label>Topic</label><div class="field"><input id="topicPreview" type="text" value="A Chossid is a Lamdan" readonly></div>
-  <label>Name</label><div class="field"><input id="namePreview" type="text" value="Parshas Noach"></div>
-  <label>Description</label><div class="field"><textarea id="descriptionPreview" rows="2">Weekly A Chossid is a Lamdan mark for Parshas Noach.</textarea></div>
+  <label>Name</label><div class="field"><input id="namePreview" type="text" placeholder="e.g. Parshas Vayishlach"></div>
+  <label>Description</label><div class="field"><textarea id="descriptionPreview" rows="2" placeholder="Optional description"></textarea></div>
 </div>
 </div>
 <div id="classes"></div>
@@ -59,25 +60,25 @@ const DEFAULT_DATA={
  date:'2026-10-15',
  classes:[
   {id:'et',label:'B3 ET',students:[
-   ['Chaikin Mayer Chaim',100,'Outstanding week — excellent participation, effort, and responsibility!'],
-   ['Gourarie Yossi',98,'Excellent participation and effort this week!'],
-   ['Huebner Sholom DovBer',95,'Very nice participation and effort this week!'],
-   ['Lapine Moshe',94,'Very good effort and participation this week!'],
-   ['Notik Kehos',99,'Excellent class involvement and effort this week!'],
-   ['Oirechman Yisroel',99,'Excellent participation and effort this week!'],
+   ['Chaikin Mayer Chaim',100,'Great job!'],
+   ['Gourarie Yossi',98,'Excellent work!'],
+   ['Huebner Sholom DovBer',95,'Very good!'],
+   ['Lapine Moshe',94,'Well done!'],
+   ['Notik Kehos',99,'Great job!'],
+   ['Oirechman Yisroel',99,'Excellent work!'],
    ['Raichik Berel',98,'Well done!'],
-   ['Raichman Moshe Tuvia',96,'Great class involvement and effort this week!'],
-   ['Rosenfeld Avrohom',98,'Excellent participation and effort this week!'],
-   ['Rozmarin Levi',97,'Great effort and participation this week!'],
-   ['Traxler Arik',95,'Very nice participation and effort this week!']
+   ['Raichman Moshe Tuvia',96,'Very good!'],
+   ['Rosenfeld Avrohom',98,'Excellent work!'],
+   ['Rozmarin Levi',97,'Well done!'],
+   ['Traxler Arik',95,'Very good!']
   ]},
   {id:'wt',label:'B3 WT',students:[
-   ['Greenberg Ari',100,'Outstanding week — excellent participation, effort, and responsibility!'],
-   ['Rosenfeld Zev',94,'Very good class involvement and effort this week!'],
-   ['Schtroks Levi',98,'Excellent participation and effort this week!'],
-   ['Simmonds Yisroel Aryeh',99,'Excellent effort and class involvement this week!'],
-   ['Vogel Leibel',96,'Great participation and effort this week!'],
-   ['Wolf Yisroel Arye Leib',100,'Outstanding week — excellent effort and responsibility!']
+   ['Greenberg Ari',100,'Great job!'],
+   ['Rosenfeld Zev',94,'Very good!'],
+   ['Schtroks Levi',98,'Excellent work!'],
+   ['Simmonds Yisroel Aryeh',99,'Excellent work!'],
+   ['Vogel Leibel',96,'Great job!'],
+   ['Wolf Yisroel Arye Leib',100,'Well done!']
   ]}
  ]
 };
@@ -86,14 +87,84 @@ function decodePayload(){
  const p=new URLSearchParams(location.search).get('p'); if(!p)return DEFAULT_DATA;
  try{const b=p.replace(/-/g,'+').replace(/_/g,'/');const txt=decodeURIComponent(escape(atob(b)));const j=JSON.parse(txt);return j&&j.classes?j:DEFAULT_DATA}catch(e){console.warn('Bad prefill payload',e);return DEFAULT_DATA}
 }
-const data=decodePayload(); document.getElementById('date').value=data.date||'2026-10-15';
+const payloadProvided=!!new URLSearchParams(location.search).get('p');
+const data=decodePayload();
+function localToday(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+const initialDate=payloadProvided?(data.date||localToday()):localToday();
+if(!payloadProvided){data.date=initialDate;data.classes.forEach(cls=>cls.students.forEach(student=>{student[1]='';student[2]=''}))}
+document.getElementById('date').value=initialDate;
+let weeklyMarksRef=null, savedWeekCache={};
+const dateInput=document.getElementById('date'),savedWeeks=document.getElementById('savedWeeks');
+function currentClassCard(id){return document.querySelector('[data-class-id="'+id+'"]')}
+function setStorageStatus(message,isError){const el=document.getElementById('storageStatus');el.textContent=message||'';el.style.color=isError?'#a12828':'var(--muted)'}
+function collectClass(cls){
+ const card=currentClassCard(cls.id);if(!card)throw new Error('Class table is not ready.');
+ return {label:cls.label,students:[...card.querySelectorAll('tbody tr')].map((row,i)=>({name:cls.students[i][0],mark:row.querySelector('[data-mark]').value.trim()===''?null:Number(row.querySelector('[data-mark]').value),comment:row.querySelector('[data-comment]').value.trim()}))};
+}
+function applyWeek(record){
+ document.getElementById('namePreview').value=record&&record.details&&record.details.test_name||'';
+ document.getElementById('descriptionPreview').value=record&&record.details&&record.details.description||'';
+ data.classes.forEach(cls=>{
+  const saved=record&&record.classes&&record.classes[cls.id],card=currentClassCard(cls.id);
+  [...card.querySelectorAll('tbody tr')].forEach((row,i)=>{
+   const student=saved&&Array.isArray(saved.students)?saved.students[i]:null;
+   row.querySelector('[data-mark]').value=student&&student.mark!==null&&student.mark!==undefined?student.mark:'';
+   row.querySelector('[data-comment]').value=student&&student.comment||'';
+  });
+  const status=document.getElementById('status-'+cls.id);if(status)status.textContent=saved?'Saved for this week':'';
+ });
+}
+function fillSavedWeeks(){
+ const selected=dateInput.value; savedWeeks.innerHTML='<option value="">Choose a saved week…</option>';
+ Object.keys(savedWeekCache).sort().reverse().forEach(week=>{const option=document.createElement('option');option.value=week;option.textContent=week;savedWeeks.appendChild(option)});
+ savedWeeks.value=Object.prototype.hasOwnProperty.call(savedWeekCache,selected)?selected:'';
+}
+async function loadWeek(date){
+ if(!date)return;
+ try{
+  let record=savedWeekCache[date];
+  if(weeklyMarksRef){const snap=await weeklyMarksRef.child(date).once('value');record=snap.val()||null;if(record)savedWeekCache[date]=record;else delete savedWeekCache[date]}
+  applyWeek(record||null);fillSavedWeeks();setStorageStatus(record?'Loaded saved week '+date:'New week: enter marks, then save each class.');
+ }catch(error){setStorageStatus('Could not load saved weeks: '+(error.message||error),true)}
+}
+async function initWeeklyStorage(){
+ try{
+  const gate=window.B3NigriGate&&window.B3NigriGate.ready?await window.B3NigriGate.ready:null;
+  if(!window.firebase||!window.firebase.auth||!window.firebase.database)throw new Error('Weekly saving is unavailable. Refresh the page to try again.');
+  const auth=window.firebase.auth();let user=auth.currentUser;
+  if(!user){setStorageStatus('Sign in with the owner Google account to use weekly saving.');user=await new Promise(resolve=>{let off=null;off=auth.onAuthStateChanged(current=>{if(current){off();resolve(current)}})})}
+  if(!gate||(!gate.allowed&&String(user.email||'').trim().toLowerCase()!=='simcha5770@gmail.com'))throw new Error('Sign in with the owner Google account to use weekly saving.');
+  if(String(user.email||'').trim().toLowerCase()!=='simcha5770@gmail.com'||user.emailVerified!==true)throw new Error('Weekly marks are available to the verified owner account.');
+  weeklyMarksRef=window.firebase.database().ref('b3Private/chossidLamdanWeeklyMarks/'+user.uid);
+  const snap=await weeklyMarksRef.once('value');savedWeekCache=snap.val()||{};fillSavedWeeks();
+  const current=savedWeekCache[dateInput.value];
+  if(current)applyWeek(current);setStorageStatus(current?'Loaded saved week '+dateInput.value:'Ready to save this week.');
+ }catch(error){setStorageStatus(error.message||'Weekly saving is unavailable.',true)}
+}
+async function saveClass(id,btn){
+ const cls=data.classes.find(c=>c.id===id),status=document.getElementById('status-'+id);if(!cls)return;
+ const date=dateInput.value;if(!date){status.textContent='Choose the week date first.';return}
+ if(!weeklyMarksRef){status.textContent='Not saved: sign in with the owner Google account.';return}
+ let value;try{value=collectClass(cls)}catch(error){status.textContent=error.message;return}
+ const invalid=value.students.some(s=>s.mark!==null&&(!Number.isInteger(s.mark)||s.mark<0||s.mark>100));
+ if(invalid){status.textContent='Marks must be whole numbers from 0 to 100.';return}
+ const missing=value.students.filter(s=>s.mark===null).length;
+ const details={topic:document.getElementById('topicPreview').value.trim()||'A Chossid is a Lamdan',test_name:document.getElementById('namePreview').value.trim(),description:document.getElementById('descriptionPreview').value.trim(),date};
+ btn.disabled=true;status.textContent='Saving…';
+ try{
+  const update={};update['classes/'+id]=value;update.details=details;update.updatedAt=window.firebase.database.ServerValue.TIMESTAMP;
+  await weeklyMarksRef.child(date).update(update);
+  savedWeekCache[date]=Object.assign({},savedWeekCache[date]||{}, {details,classes:Object.assign({},(savedWeekCache[date]||{}).classes||{}, {[id]:value})});
+  fillSavedWeeks();status.textContent='Saved'+(missing?' as a draft ('+missing+' mark'+(missing===1?'':'s')+' blank)':' for '+date)+'.';setStorageStatus('Saved '+cls.label+' for '+date+'.');
+ }catch(error){status.textContent='Not saved: '+(error.message||error);setStorageStatus('Save failed. Your entries are still on this page.',true)}finally{btn.disabled=false}
+}
 function render(){
  const host=document.getElementById('classes');host.innerHTML='';
  data.classes.forEach(cls=>{
   const card=document.createElement('div');card.className='card';card.dataset.classId=cls.id;
   card.innerHTML='<h2>'+esc(cls.label)+'</h2><div class="nigri-grid"><label>Grade</label><div class="field"><input type="text" value="'+esc(cls.label)+'" readonly></div></div><table><thead><tr><th>Student</th><th>Mark</th><th>Comment</th></tr></thead><tbody>'+
   cls.students.map((s,i)=>'<tr><td><b>'+esc(s[0])+'</b></td><td><input type="number" min="0" max="100" value="'+(s[1]??'')+'" data-mark="'+i+'"></td><td><textarea rows="2" data-comment="'+i+'">'+esc(s[2])+'</textarea></td></tr>').join('')+
-  '</tbody></table><div class="actions"><button class="good" onclick="syncClass(\''+cls.id+'\',this)">Sync '+esc(cls.label)+' to Nigri</button><span class="status" id="status-'+cls.id+'"></span></div>';
+  '</tbody></table><div class="actions"><button class="good" onclick="saveClass(\''+cls.id+'\',this)">Save '+esc(cls.label)+' for this week</button><button class="secondary" onclick="syncClass(\''+cls.id+'\',this)">Sync '+esc(cls.label)+' to Nigri</button><span class="status" id="status-'+cls.id+'" role="status"></span></div>';
   host.appendChild(card);
  });
 }
@@ -116,4 +187,7 @@ async function syncClass(id,btn){
  }catch(e){status.textContent='Could not reach Nigri sync: '+e.message}finally{btn.disabled=false}
 }
 render();
+dateInput.addEventListener('change',()=>loadWeek(dateInput.value));
+savedWeeks.addEventListener('change',()=>{if(savedWeeks.value){dateInput.value=savedWeeks.value;loadWeek(savedWeeks.value)}});
+initWeeklyStorage();
 </script></body></html>

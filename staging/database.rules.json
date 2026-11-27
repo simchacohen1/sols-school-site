@@ -818,6 +818,12 @@
             }
           }
         }
+      },
+      "chossidLamdanWeeklyMarks": {
+        "$ownerUid": {
+          ".read": "auth != null && auth.uid == $ownerUid && auth.token.email == 'owner@funtorahtools-staging.test' && auth.token.email_verified == true",
+          ".write": "auth != null && auth.uid == $ownerUid && auth.token.email == 'owner@funtorahtools-staging.test' && auth.token.email_verified == true"
+        }
       }
     }
   }
